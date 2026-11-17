@@ -1118,6 +1118,25 @@ button {
   font-size: 1.35rem;
 }
 
+/* Mobile header menu button - ensure hamburger is visible */
+@media (max-width: 768px) {
+  .site-header .menu-btn {
+    display: inline-flex !important;
+    width: 44px;
+    height: 44px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    z-index: 110;
+  }
+  .site-header .menu-btn svg,
+  .site-header .menu-btn [data-lucide] {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  /* Ensure nav links are hidden on mobile */
+  .site-header nav { display: none !important; }
+}
+
 /* command palette */
 .cmdk {
   position: fixed;

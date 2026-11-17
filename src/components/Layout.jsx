@@ -285,8 +285,8 @@ function Header({ onSearch }) {
               <Link to="/admissions" className="btn btn-gold btn-sm hidden sm:inline-flex">
                 Apply Now <Lucide.ArrowUpRight size={13} />
               </Link>
-              <button className="icon-btn xl:hidden" onClick={() => setMobile(true)} aria-label="Open menu">
-                <Lucide.Menu size={18} />
+              <button className="icon-btn md:hidden menu-btn" onClick={() => setMobile(true)} aria-label="Open menu">
+                <Lucide.Menu size={20} />
               </button>
             </div>
           </div>
