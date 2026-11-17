@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# D.K.D. College (Autonomous), Dergaon
+# Sitemap: https://dkdcollege.ac.in/sitemap.xml
