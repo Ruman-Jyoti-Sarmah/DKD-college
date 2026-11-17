@@ -293,6 +293,14 @@ function Header({ onSearch }) {
         </div>
       </header>
 
+      {/* mobile backdrop */}
+      {mobile && (
+        <div
+          className="mobile-drawer-backdrop"
+          onClick={() => setMobile(false)}
+          aria-hidden="true"
+        />
+      )}
       {/* mobile drawer */}
       <div className={`mobile-drawer ${mobile ? "open" : ""}`}>
         <div className="flex items-center justify-between px-5 h-[74px] border-b" style={{ borderColor: "var(--line)" }}>

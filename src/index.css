@@ -1510,12 +1510,18 @@ button {
 @media (max-width: 640px) {
   .faculty-photo { aspect-ratio: 4 / 5; }
   .faculty-card-body { padding: 10px 12px 12px; }
-  .faculty-card-name { font-size: 13px; }
+  .faculty-card-name { font-size: 13px; line-height: 1.2; }
   .faculty-card-qual { font-size: 9px; }
   .faculty-dept-badge { font-size: 7.5px; padding: 3px 7px; top: 8px; left: 8px; }
-  .faculty-role-badge { font-size: 8px; left: 10px; bottom: 10px; right: 10px; }
+  .faculty-role-badge { font-size: 8px; left: 10px; bottom: 10px; right: 10px; line-height: 1.3; }
   .faculty-card-tags { margin-top: 6px; gap: 3px; }
   .faculty-card-tags span { font-size: 7.5px; padding: 2px 5px; }
+
+  /* Fix text truncation (ellipsis) on mobile - show full text, wrap instead */
+  .faculty-card-name { white-space: normal; overflow: visible; text-overflow: unset; }
+  .faculty-dept-badge { white-space: normal; overflow: visible; text-overflow: unset; max-width: none; }
+  .faculty-role-badge { white-space: normal; overflow: visible; text-overflow: unset; padding-right: 10px; }
+  .faculty-card-tags span { white-space: normal; overflow: visible; text-overflow: unset; max-width: none; }
 
   .faculty-modal-actions { flex-direction: column; gap: 8px; }
   .faculty-modal-actions .btn { width: 100%; justify-content: center; }
@@ -1529,8 +1535,9 @@ button {
   .page-title { font-size: clamp(1.8rem, 8vw, 2.6rem); }
 
   /* Mobile drawer improvements */
-  .mobile-drawer { width: 280px; }
-  .mobile-link { font-size: 1.2rem; padding: 14px 0; }
+  .mobile-drawer { width: 100vw; max-width: 100vw; }
+  .mobile-link { font-size: 1.2rem; padding: 14px 0; white-space: normal; }
+  .mobile-link svg { flex-shrink: 0; }
 
   /* Contact strip grid on mobile */
   .faculty-modal-info > .grid { grid-template-columns: 1fr; }
@@ -1538,6 +1545,18 @@ button {
   /* CTA band mobile */
   .CtaBand, .cta-band { flex-direction: column; gap: 20px; text-align: center; }
 }
+
+/* ---------- Mobile drawer backdrop ---------- */
+.mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(3, 12, 9, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.mobile-drawer { width: 100vw; max-width: 100vw; }
 
 /* ---------- Extra small mobile ---------- */
 @media (max-width: 480px) {
@@ -1552,7 +1571,7 @@ button {
   .page-hero .crumb { font-size: 10px; gap: 6px; }
   .page-title { font-size: clamp(1.6rem, 9vw, 2.2rem); }
 
-  .mobile-drawer { width: 260px; }
+  .mobile-drawer { width: 100vw; max-width: 100vw; }
   .nav-link { font-size: 12px; padding: 8px 10px; }
 
   .btn { padding: 12px 18px; font-size: 12px; }
