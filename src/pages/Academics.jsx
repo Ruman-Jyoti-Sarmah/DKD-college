@@ -14,6 +14,7 @@ import {
   StaggerItem,
 } from "../components/UI";
 import { FacultyCard, FacultyProfileModal } from "../components/Faculty";
+import Carousel3D from "../components/Carousel3D";
 import { facultyByDepartment, facultyDirectory, photoFor } from "../data/faculty";
 import { departments, downloads, programmes } from "../data/site";
 
@@ -224,36 +225,43 @@ export function Departments() {
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((d, i) => {
-              const hod = d.faculty.find((f) => f.role.toLowerCase().includes("hod") || f.role.toLowerCase().includes("ho d")) || d.faculty[0];
+          <Carousel3D
+            key={`${filter}-${q}`}
+            items={filtered}
+            getKey={(d) => d.slug}
+            ariaLabel="Academic departments"
+            height={356}
+            renderItem={(d) => {
+              const hod =
+                d.faculty.find((f) => f.role.toLowerCase().includes("hod") || f.role.toLowerCase().includes("ho d")) ||
+                d.faculty[0];
               return (
-                <Reveal key={d.slug} delay={(i % 6) * 0.05}>
-                  <Link to={`/departments/${d.slug}`} className="group card p-6 h-full flex flex-col relative overflow-hidden">
-                    <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full opacity-[0.06] group-hover:opacity-[0.13] transition-opacity" style={{ background: "var(--gold)" }} />
-                    <div className="flex items-start justify-between mb-5">
-                      <span className="w-12 h-12 rounded-xl grid place-items-center" style={{ background: "var(--bg-alt)", color: "var(--gold)" }}>
-                        <Icon name={d.icon} size={21} />
-                      </span>
-                      <Pill>{d.stream}</Pill>
+                <Link to={`/departments/${d.slug}`} className="dept-slide group">
+                  <span className="dept-slide-glow" />
+                  <div className="flex items-start justify-between gap-3 relative">
+                    <span className="w-11 h-11 rounded-xl grid place-items-center shrink-0" style={{ background: "var(--bg-alt)", color: "var(--gold)" }}>
+                      <Icon name={d.icon} size={20} />
+                    </span>
+                    <Pill>{d.stream}</Pill>
+                  </div>
+                  <h2 className="font-display text-[21px] leading-tight mt-4 relative">{d.name}</h2>
+                  <p className="text-[11px] leading-relaxed mt-2 flex-1 relative" style={{ color: "var(--muted)" }}>
+                    {d.blurb.slice(0, 112)}…
+                  </p>
+                  <div className="mt-4 pt-3 space-y-2 relative" style={{ borderTop: "1px solid var(--line)" }}>
+                    <div className="flex items-center gap-2 text-[10.5px]" style={{ color: "var(--muted)" }}>
+                      <Lucide.UserRound size={11} style={{ color: "var(--gold)" }} />
+                      <span className="truncate">{hod.name}</span>
                     </div>
-                    <h2 className="font-display text-[22px] leading-tight">{d.name}</h2>
-                    <p className="text-[11.5px] leading-relaxed mt-2 flex-1" style={{ color: "var(--muted)" }}>{d.blurb.slice(0, 118)}…</p>
-                    <div className="mt-5 pt-4 space-y-2" style={{ borderTop: "1px solid var(--line)" }}>
-                      <div className="flex items-center gap-2 text-[10.5px]" style={{ color: "var(--muted)" }}>
-                        <Lucide.UserRound size={11} style={{ color: "var(--gold)" }} />
-                        <span className="truncate">{hod.name}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--muted)" }}>{d.faculty.length} faculty</span>
-                        <span className="flex items-center gap-1 text-[10.5px] font-bold" style={{ color: "var(--gold-ink)" }}>Explore <Lucide.ArrowRight size={11} /></span>
-                      </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--muted)" }}>{d.faculty.length} faculty</span>
+                      <span className="flex items-center gap-1 text-[10.5px] font-bold" style={{ color: "var(--gold-ink)" }}>Explore <Lucide.ArrowRight size={11} /></span>
                     </div>
-                  </Link>
-                </Reveal>
+                  </div>
+                </Link>
               );
-            })}
-          </div>
+            }}
+          />
           {filtered.length === 0 && (
             <EmptyState title="No departments found" text="Try a different stream or search term." />
           )}

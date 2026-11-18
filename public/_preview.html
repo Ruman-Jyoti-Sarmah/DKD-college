@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Layout preview harness</title>
+    <style>
+      html, body { margin: 0; padding: 0; background: #111; }
+      #wrap { transform-origin: top left; }
+      #frame { border: 0; display: block; background: var(--bg); }
+    </style>
+  </head>
+  <body>
+    <div id="wrap"><iframe id="frame" title="preview"></iframe></div>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const path = params.get("path") || "/";
+      const w = parseInt(params.get("w") || "1440", 10);
+      const h = parseInt(params.get("h") || "900", 10);
+      const scaleParam = params.get("s");
+      const scale = scaleParam ? parseFloat(scaleParam) : Math.min(1, (window.innerWidth - 8) / w);
+      const frame = document.getElementById("frame");
+      const wrap = document.getElementById("wrap");
+      frame.width = w;
+      frame.height = h;
+      frame.src = path;
+      wrap.style.transform = `scale(${scale})`;
+      frame.style.width = w + "px";
+      frame.style.height = h + "px";
+      window.__preview = { frame, scale };
+      window.scrollFrame = (y) => frame.contentWindow.scrollTo(0, y);
+    </script>
+  </body>
+</html>

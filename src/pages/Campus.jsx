@@ -13,6 +13,7 @@ import {
   Stagger,
   StaggerItem,
 } from "../components/UI";
+import Carousel3D from "../components/Carousel3D";
 import { college, events, facilities, gallery, studentLife, testimonials } from "../data/site";
 
 /* ================================================================== */
@@ -37,23 +38,35 @@ export function Facilities() {
 
       <section className="section" style={{ background: "var(--bg)" }}>
         <div className="container-x">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {facilities.slice(0, 6).map((f, i) => (
-              <Reveal key={f.slug} delay={(i % 3) * 0.05} className={i === 0 ? "md:col-span-2" : ""}>
-                <a href={`#${f.slug}`} className="group relative block overflow-hidden rounded-2xl h-full min-h-[250px]" style={{ border: "1px solid var(--line)" }}>
-                  <img src={f.image} alt={f.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(3,15,11,.94) 0%, rgba(3,15,11,.3) 55%, rgba(3,15,11,.05))" }} />
-                  <div className="absolute bottom-0 p-6">
-                    <span className="w-9 h-9 rounded-lg grid place-items-center mb-3" style={{ background: "rgba(216,179,106,.18)", color: "#e9d29a", backdropFilter: "blur(4px)" }}>
-                      <Icon name={f.icon} size={17} />
-                    </span>
-                    <h2 className="font-display text-2xl" style={{ color: "#fbf6e8" }}>{f.title}</h2>
-                    <p className="text-[11.5px] mt-1.5 max-w-sm" style={{ color: "rgba(255,255,255,.58)" }}>{f.summary}</p>
-                  </div>
-                </a>
-              </Reveal>
-            ))}
-          </div>
+          <SectionHeading
+            eyebrow="A walk through campus"
+            title={<>Everything, <span className="serif-italic">close at hand.</span></>}
+            desc="Six places that shape a D.K.D. day — browse the deck, then dive into the details."
+            align="center"
+            className="mb-10"
+          />
+          <Carousel3D
+            items={facilities.slice(0, 6)}
+            getKey={(f) => f.slug}
+            ariaLabel="Campus facilities"
+            height={430}
+            renderItem={(f) => (
+              <a href={`#${f.slug}`} className="fac-slide group">
+                <img src={f.image} alt={f.title} loading="lazy" />
+                <span className="fac-slide-shade" />
+                <span className="fac-slide-body">
+                  <span className="fac-slide-icon">
+                    <Icon name={f.icon} size={16} />
+                  </span>
+                  <span className="fac-slide-title">{f.title}</span>
+                  <span className="fac-slide-text">{f.summary}</span>
+                  <span className="fac-slide-cta">
+                    View details <Lucide.ArrowRight size={12} />
+                  </span>
+                </span>
+              </a>
+            )}
+          />
 
           <div className="mt-14 space-y-4">
             {facilities.map((f, i) => (
@@ -112,21 +125,31 @@ export function StudentLife() {
 
       <section className="section" style={{ background: "var(--bg)" }}>
         <div className="container-x">
-          <Stagger className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {studentLife.map((s) => (
-              <StaggerItem key={s.title}>
-                <Link to={s.href} className="group card p-6 h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-5">
-                    <span className="w-12 h-12 rounded-xl grid place-items-center" style={{ background: "var(--forest)", color: "#e9d29a" }}><Icon name={s.icon} size={20} /></span>
-                    <Pill tone="gold">{s.tag}</Pill>
-                  </div>
-                  <h2 className="font-display text-2xl">{s.title}</h2>
-                  <p className="text-[12px] leading-relaxed mt-2 flex-1" style={{ color: "var(--muted)" }}>{s.text}</p>
-                  <span className="link-arrow mt-5 text-[11px]">Explore <Lucide.ArrowRight size={12} /></span>
-                </Link>
-              </StaggerItem>
-            ))}
-          </Stagger>
+          <Carousel3D
+            items={studentLife}
+            getKey={(s) => s.title}
+            ariaLabel="Student life at D.K.D. College"
+            height={318}
+            renderItem={(s, isActive, i) => (
+              <Link to={s.href} className="life-slide group">
+                <span className="life-slide-ghost" aria-hidden="true">
+                  <Icon name={s.icon} size={132} />
+                </span>
+                <span className="life-slide-top">
+                  <span className="life-slide-icon">
+                    <Icon name={s.icon} size={20} />
+                  </span>
+                  <Pill tone="gold">{s.tag}</Pill>
+                </span>
+                <span className="life-slide-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <h2 className="font-display text-[23px] leading-tight relative">{s.title}</h2>
+                <p className="text-[11.5px] leading-relaxed mt-2 relative flex-1" style={{ color: "var(--muted)" }}>{s.text}</p>
+                <span className="life-slide-cta">
+                  Explore <Lucide.ArrowRight size={12} />
+                </span>
+              </Link>
+            )}
+          />
         </div>
       </section>
 
@@ -446,21 +469,33 @@ export function Gallery() {
           <div className="flex flex-wrap gap-2 mb-7">
             {cats.map((c) => <button key={c} className={`tab ${cat === c ? "active" : ""}`} onClick={() => setCat(c)}>{c}</button>)}
           </div>
-          <div className="masonry columns-1 sm:columns-2 lg:columns-3">
-            {items.map((g, i) => (
-              <button key={g.src + i} onClick={() => setActive(i)} className="group relative block w-full overflow-hidden rounded-xl text-left" style={{ border: "1px solid var(--line)" }}>
-                <img src={g.src} alt={g.title} className="w-full object-cover transition-transform duration-700 group-hover:scale-105" style={{ aspectRatio: i % 3 === 0 ? "4/5" : i % 3 === 1 ? "4/3" : "1/1" }} />
-                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(to top, rgba(4,18,13,.85), transparent 60%)" }} />
-                <span className="absolute left-4 bottom-4 right-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
-                  <span className="block text-[9px] uppercase tracking-[0.14em]" style={{ color: "#e9d29a" }}>{g.category}</span>
-                  <span className="block text-[12.5px] font-semibold mt-1" style={{ color: "#fff" }}>{g.title}</span>
+          <Carousel3D
+            key={cat}
+            items={items}
+            getKey={(g, i) => `${g.src}-${i}`}
+            ariaLabel="Campus photo gallery"
+            height={470}
+            renderItem={(g, isActive, i) => (
+              <button
+                type="button"
+                className="gallery-slide"
+                onClick={() => setActive(i)}
+                aria-label={`Open photo: ${g.title}`}
+              >
+                <img src={g.src} alt={g.title} loading="lazy" />
+                <span className="gallery-slide-shade" />
+                <span className="gallery-slide-cap">
+                  <span className="gallery-slide-cat">{g.category}</span>
+                  <span className="gallery-slide-title">{g.title}</span>
                 </span>
-                <span className="absolute top-3 right-3 w-8 h-8 rounded-full grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "rgba(0,0,0,.4)", color: "#fff", backdropFilter: "blur(4px)" }}>
-                  <Lucide.Maximize2 size={13} />
-                </span>
+                {isActive && (
+                  <span className="gallery-slide-zoom" aria-hidden="true">
+                    <Lucide.Maximize2 size={14} />
+                  </span>
+                )}
               </button>
-            ))}
-          </div>
+            )}
+          />
         </div>
       </section>
 
