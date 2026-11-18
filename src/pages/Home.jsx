@@ -16,6 +16,8 @@ import {
   CrestSeal,
   Pill,
 } from "../components/UI";
+import { FacultyCard, FacultyProfileModal } from "../components/Faculty";
+import { facultyDirectory } from "../data/faculty";
 import {
   college,
   events,
@@ -57,7 +59,7 @@ function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, delay: 0.08 }}
             >
-              Where knowledge
+              Where knowledge{" "}
               <br />
               becomes a <em>way of life.</em>
             </motion.h1>
@@ -94,7 +96,7 @@ function Hero() {
                 <span className="w-9 h-9 rounded-full grid place-items-center border transition-colors group-hover:border-[#d8b36a]" style={{ borderColor: "rgba(255,255,255,.3)" }}>
                   <Lucide.Play size={12} fill="currentColor" />
                 </span>
-                <span className="hidden sm:inline">See campus life</span>
+                <span>See campus life</span>
               </Link>
             </motion.div>
 
@@ -175,21 +177,21 @@ function QuickActions() {
     <section className="section-sm" style={{ background: "var(--bg)" }}>
       <div className="container-x">
         <h2 className="sr-only">Quick links</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2.5 sm:gap-3">
           {quickActions.map((a, i) => (
             <Reveal key={a.title} delay={i * 0.05}>
               <Link
                 to={a.href}
-                className="group h-full block rounded-2xl p-5 border transition-all duration-300 hover:-translate-y-1.5"
+                className="group h-full block rounded-2xl p-4 sm:p-5 border transition-all duration-300 hover:-translate-y-1.5"
                 style={{ background: "var(--surface)", borderColor: "var(--line)", boxShadow: "0 1px 0 rgba(0,0,0,.02)" }}
               >
                 <div className="flex items-start justify-between">
-                  <span className="w-10 h-10 rounded-xl grid place-items-center mb-4" style={{ background: a.tone === "gold" ? "color-mix(in srgb, var(--gold) 15%, transparent)" : "color-mix(in srgb, var(--accent-leaf) 14%, transparent)", color: a.tone === "gold" ? "var(--gold)" : "var(--accent-leaf)" }}>
+                  <span className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl grid place-items-center mb-3 sm:mb-4" style={{ background: a.tone === "gold" ? "color-mix(in srgb, var(--gold) 15%, transparent)" : "color-mix(in srgb, var(--accent-leaf) 14%, transparent)", color: a.tone === "gold" ? "var(--gold)" : "var(--accent-leaf)" }}>
                     <Icon name={a.icon} size={18} />
                   </span>
                   <Lucide.ArrowUpRight size={14} className="opacity-25 group-hover:opacity-100 transition-opacity" style={{ color: "var(--gold)" }} />
                 </div>
-                <h3 className="font-display text-[16px] leading-tight">{a.title}</h3>
+                <h3 className="font-display text-[14.5px] sm:text-[16px] leading-tight">{a.title}</h3>
                 <p className="text-[11px] leading-relaxed mt-1.5" style={{ color: "var(--muted)" }}>{a.desc}</p>
               </Link>
             </Reveal>
@@ -603,7 +605,7 @@ function NoticesEvents() {
                 </div>
               </Link>
             </Reveal>
-            <div className="grid grid-cols-2 gap-3 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
               {events.slice(1, 3).map((e) => (
                 <Reveal key={e.id} delay={0.08}>
                   <Link to="/events" className="group flex gap-3 rounded-xl p-2.5 border transition-colors hover:border-[var(--gold)]" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
@@ -756,6 +758,53 @@ function FaqSection() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Faculty spotlight                                                  */
+/* ------------------------------------------------------------------ */
+function FacultySpotlight() {
+  const [profile, setProfile] = useState(null);
+  const featured = [
+    ["Dr. Tridhara Bardoloi", "dept-of-english"],
+    ["Dr. Sikhajyoti Ojah", "dept-of-physics"],
+    ["Dr. Labanya Das", "dept-of-geography"],
+    ["Dr. Shahnoor Rahman", "dept-of-commerce"],
+  ]
+    .map(([name, slug]) =>
+      facultyDirectory.find((f) => f.name === name && f.departmentSlug === slug)
+    )
+    .filter(Boolean);
+
+  return (
+    <section className="section relative overflow-hidden" style={{ background: "var(--bg-alt)" }}>
+      <div className="absolute inset-0 jaapi opacity-25" />
+      <div className="container-x relative">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <Reveal>
+            <SectionHeading
+              eyebrow="The people behind the college"
+              title={<>Scholars. Mentors. <span className="serif-italic text-gold">Believers.</span></>}
+              desc="Meet a few of the teachers who bring the classroom to life — and explore the full directory of faculty across all sixteen departments."
+            />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <Link to="/faculty" className="btn btn-outline btn-sm shrink-0">
+              View all faculty <Lucide.ArrowUpRight size={13} />
+            </Link>
+          </Reveal>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          {featured.map((member, i) => (
+            <Reveal key={member.id} delay={i * 0.05}>
+              <FacultyCard member={member} onOpen={setProfile} />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+      <FacultyProfileModal member={profile} onClose={() => setProfile(null)} onSelect={setProfile} />
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 export default function Home() {
   return (
     <>
@@ -769,6 +818,7 @@ export default function Home() {
       <CampusStrip />
       <NoticesEvents />
       <Numbers />
+      <FacultySpotlight />
       <Testimonials />
       <FaqSection />
       <CtaBand />

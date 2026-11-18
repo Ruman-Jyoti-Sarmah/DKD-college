@@ -1,15 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import * as Lucide from "lucide-react";
-import { facultyDetails, initials } from "../data/faculty";
+import { facultyByDepartment, initials } from "../data/faculty";
+import { college } from "../data/site";
 
 /* ------------------------------------------------------------------ */
 /*  Faculty portrait card                                              */
 /* ------------------------------------------------------------------ */
 export function FacultyCard({ member, onOpen, compact = false }) {
-  const detail = facultyDetails[member.name] || {};
   return (
     <button
       type="button"
@@ -27,6 +27,7 @@ export function FacultyCard({ member, onOpen, compact = false }) {
         )}
         <div className="faculty-photo-shade" />
         <span className="faculty-dept-badge">{member.department}</span>
+        {/hod/i.test(member.role) && <span className="faculty-hod">HoD</span>}
         <span className="faculty-role-badge">{member.role}</span>
         <span className="faculty-view">
           View profile <Lucide.ArrowUpRight size={12} />
@@ -34,10 +35,11 @@ export function FacultyCard({ member, onOpen, compact = false }) {
       </div>
       <div className="faculty-card-body">
         <h3 className="faculty-card-name">{member.name}</h3>
+        <p className="faculty-card-role">{member.role}</p>
         <p className="faculty-card-qual">{member.qual}</p>
         <div className="mt-4 flex items-center gap-2 text-[10px]" style={{ color: "var(--muted)" }}>
-          <Lucide.BriefcaseBusiness size={11} style={{ color: "var(--gold)" }} />
-          <span>{detail.experience || "Experience n/a"}</span>
+          <Lucide.BookOpen size={11} style={{ color: "var(--gold)" }} />
+          <span className="truncate">{member.subjects[0]}</span>
         </div>
         {!compact && (
           <div className="faculty-card-tags">
@@ -54,7 +56,9 @@ export function FacultyCard({ member, onOpen, compact = false }) {
 /* ------------------------------------------------------------------ */
 /*  Full profile dialog                                                */
 /* ------------------------------------------------------------------ */
-export function FacultyProfileModal({ member, onClose }) {
+export function FacultyProfileModal({ member, onClose, onSelect }) {
+  const dialogRef = useRef(null);
+
   useEffect(() => {
     if (!member) return;
     const previous = document.body.style.overflow;
@@ -69,8 +73,15 @@ export function FacultyProfileModal({ member, onClose }) {
     };
   }, [member, onClose]);
 
+  useEffect(() => {
+    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
+  }, [member]);
+
   if (typeof document === "undefined") return null;
-  const detail = member ? (facultyDetails[member.name] || {}) : {};
+
+  const peers = member
+    ? (facultyByDepartment[member.departmentSlug] || []).filter((f) => f.id !== member.id).slice(0, 6)
+    : [];
 
   return createPortal(
     <AnimatePresence>
@@ -89,6 +100,7 @@ export function FacultyProfileModal({ member, onClose }) {
             aria-modal="true"
             aria-labelledby="faculty-profile-name"
             className="faculty-modal"
+            ref={dialogRef}
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 18, scale: 0.98 }}
@@ -119,35 +131,28 @@ export function FacultyProfileModal({ member, onClose }) {
                 {member.name}
               </h2>
               <p className="faculty-modal-role">{member.role}</p>
-              <p className="text-[12px] mt-2 leading-relaxed" style={{ color: "var(--muted)", maxWidth: 420 }}>
-                {detail.bio || `Dedicated faculty member of the Department of ${member.department}.`}
-              </p>
 
               {/* Contact strip */}
               <div className="mt-5 rounded-xl border p-4" style={{ borderColor: "var(--line)", background: "var(--bg-alt)" }}>
                 <div className="text-[9px] uppercase tracking-[0.16em] font-bold mb-3" style={{ color: "var(--gold-ink)" }}>
-                  Contact
+                  Reach the college
                 </div>
                 <div className="grid sm:grid-cols-2 gap-3">
-                  {detail.email && (
-                    <a href={`mailto:${detail.email}`} className="flex items-center gap-3 rounded-lg border px-3 py-2.5 text-[11px]" style={{ borderColor: "var(--line)" }}>
-                      <Lucide.Mail size={13} style={{ color: "var(--gold)" }} />
-                      <span className="min-w-0 truncate">{detail.email}</span>
-                    </a>
-                  )}
-                  {detail.phone && (
-                    <a href={`tel:${detail.phone}`} className="flex items-center gap-3 rounded-lg border px-3 py-2.5 text-[11px]" style={{ borderColor: "var(--line)" }}>
-                      <Lucide.Phone size={13} style={{ color: "var(--gold)" }} />
-                      <span className="min-w-0 truncate">{detail.phone}</span>
-                    </a>
-                  )}
+                  <a href={`mailto:${college.email}`} className="flex items-center gap-3 rounded-lg border px-3 py-2.5 text-[11px]" style={{ borderColor: "var(--line)" }}>
+                    <Lucide.Mail size={13} style={{ color: "var(--gold)" }} />
+                    <span className="min-w-0 truncate">{college.email}</span>
+                  </a>
+                  <a href={`tel:${college.phone}`} className="flex items-center gap-3 rounded-lg border px-3 py-2.5 text-[11px]" style={{ borderColor: "var(--line)" }}>
+                    <Lucide.Phone size={13} style={{ color: "var(--gold)" }} />
+                    <span className="min-w-0 truncate">{college.phone}</span>
+                  </a>
                   <span className="flex items-center gap-3 rounded-lg border px-3 py-2.5 text-[11px]" style={{ borderColor: "var(--line)" }}>
                     <Lucide.Building2 size={13} style={{ color: "var(--gold)" }} />
-                    <span className="min-w-0 truncate">{member.department}</span>
+                    <span className="min-w-0 truncate">Dept. of {member.department}</span>
                   </span>
                   <span className="flex items-center gap-3 rounded-lg border px-3 py-2.5 text-[11px]" style={{ borderColor: "var(--line)" }}>
-                    <Lucide.UserRound size={13} style={{ color: "var(--gold)" }} />
-                    <span className="min-w-0 truncate">{detail.experience || "—"}</span>
+                    <Lucide.MapPin size={13} style={{ color: "var(--gold)" }} />
+                    <span className="min-w-0 truncate">Dergaon, Golaghat</span>
                   </span>
                 </div>
               </div>
@@ -170,37 +175,6 @@ export function FacultyProfileModal({ member, onClose }) {
                 </div>
               </div>
 
-              {detail.researchInterests && detail.researchInterests.length > 0 && (
-                <div className="faculty-modal-block">
-                  <div className="faculty-modal-label">
-                    <Lucide.Microscope size={13} /> Research interests
-                  </div>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {detail.researchInterests.map((interest) => (
-                      <span key={interest} className="badge badge-gold">{interest}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {detail.achievements && detail.achievements.length > 0 && (
-                <div className="faculty-modal-block">
-                  <div className="faculty-modal-label">
-                    <Lucide.Trophy size={13} /> Achievements
-                  </div>
-                  <ul className="mt-2 space-y-2 text-[12px]" style={{ color: "var(--muted)" }}>
-                    {detail.achievements.map((a, i) => (
-                      <li key={i} className="flex items-start gap-2 pl-1">
-                        <span className="mt-0.5 shrink-0" style={{ color: "var(--gold)" }}>
-                          <Lucide.CheckCircle2 size={12} />
-                        </span>
-                        {a}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
               <div className="faculty-modal-block">
                 <div className="faculty-modal-label">
                   <Lucide.Building2 size={13} /> Department
@@ -211,12 +185,35 @@ export function FacultyProfileModal({ member, onClose }) {
                 </Link>
               </div>
 
+              {peers.length > 0 && (
+                <div className="faculty-modal-block">
+                  <div className="faculty-modal-label">
+                    <Lucide.Users size={13} /> Also in this department
+                  </div>
+                  <div className="faculty-peers">
+                    {peers.map((peer) => (
+                      <button
+                        key={peer.id}
+                        type="button"
+                        className="faculty-peer"
+                        onClick={() => onSelect?.(peer)}
+                        title={peer.name}
+                      >
+                        {peer.photo ? (
+                          <img src={peer.photo} alt="" loading="lazy" />
+                        ) : (
+                          <span className="faculty-peer-mono" aria-hidden="true">
+                            {peer.initials || initials(peer.name)}
+                          </span>
+                        )}
+                        <span className="faculty-peer-name">{peer.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="faculty-modal-actions">
-                {detail.email && (
-                  <a href={`mailto:${detail.email}`} onClick={onClose} className="btn btn-outline btn-sm">
-                    <Lucide.Mail size={13} /> Email {member.name.split(" ")[0]}
-                  </a>
-                )}
                 <Link to="/admissions" onClick={onClose} className="btn btn-gold btn-sm">
                   Apply to D.K.D. <Lucide.ArrowUpRight size={12} />
                 </Link>

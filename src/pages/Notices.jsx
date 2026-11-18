@@ -119,7 +119,7 @@ export function Notices() {
                     />
                     <input
                       className="field pl-11"
-                      placeholder="Search notices, circulars and announcements…"
+                      placeholder="Search notices, circulars…"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       aria-label="Search notices"

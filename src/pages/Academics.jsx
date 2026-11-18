@@ -347,7 +347,7 @@ export function DepartmentDetail() {
                       </div>
                       <span className="badge">{d.faculty.length} members</span>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {(facultyByDepartment[d.slug] || []).map((member) => (
                         <FacultyCard key={member.id} member={member} onOpen={setProfile} />
                       ))}
@@ -455,7 +455,7 @@ export function DepartmentDetail() {
         </div>
       </section>
 
-      <FacultyProfileModal member={profile} onClose={() => setProfile(null)} />
+      <FacultyProfileModal member={profile} onClose={() => setProfile(null)} onSelect={setProfile} />
       <CtaBand />
     </>
   );
@@ -538,7 +538,7 @@ export function Faculty() {
                 <button key={s} className={`tab ${stream === s ? "active" : ""}`} onClick={() => chooseStream(s)}>{s}</button>
               ))}
               <span className="hidden sm:block w-px h-5 mx-1" style={{ background: "var(--line)" }} />
-              <div className="relative flex-1 min-w-[190px] sm:max-w-xs">
+              <div className="relative flex-1 min-w-[190px] sm:max-w-sm">
                 <Lucide.Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--muted)" }} />
                 <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, department, qualification…" className="field pl-10" aria-label="Search faculty" />
               </div>
@@ -567,7 +567,7 @@ export function Faculty() {
                 <div className="eyebrow mb-3">Departments &amp; faculty</div>
                 <h2 className="section-title mb-6">Every department, every teacher</h2>
                 <p className="text-[12.5px] mb-6" style={{ color: "var(--muted)" }}>
-                  Browse faculty by department. Tap any portrait to read full qualifications, experience and contact details.
+                  Browse faculty by department. Tap any portrait to read qualifications, teaching areas and department details.
                 </p>
               </div>
 
@@ -575,13 +575,24 @@ export function Faculty() {
                 <section key={d.slug} className="mb-12 rounded-2xl border overflow-hidden" style={{ borderColor: "var(--line)" }}>
                   <div className="flex flex-col md:flex-row md:items-center gap-4 p-6 md:p-8 relative overflow-hidden" style={{ background: "var(--surface)" }}>
                     <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full opacity-[0.04]" style={{ background: "var(--gold)" }} />
-                    <span className="shrink-0 w-14 h-14 rounded-2xl grid place-items-center flex-shrink-0" style={{ background: "var(--bg-alt)", color: "var(--gold)" }}>
-                      <Icon name={d.icon} size={22} />
-                    </span>
+                    {photoFor(facultyByDepartment[d.slug]?.[0]?.name || "") ? (
+                      <img
+                        src={photoFor(facultyByDepartment[d.slug][0].name)}
+                        alt={facultyByDepartment[d.slug][0].name}
+                        loading="lazy"
+                        className="shrink-0 w-14 h-14 rounded-2xl object-cover"
+                        style={{ border: "2px solid color-mix(in srgb, var(--gold) 45%, transparent)", objectPosition: "center 18%" }}
+                      />
+                    ) : (
+                      <span className="shrink-0 w-14 h-14 rounded-2xl grid place-items-center flex-shrink-0" style={{ background: "var(--bg-alt)", color: "var(--gold)" }}>
+                        <Icon name={d.icon} size={22} />
+                      </span>
+                    )}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
                         <span className="badge">{d.stream}</span>
                         <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: "var(--muted)" }}>Est. {d.established}</span>
+                        <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: "var(--gold-ink)" }}>{members.length} faculty</span>
                       </div>
                       <h3 className="font-display text-[clamp(1.3rem,2vw,1.6rem)] leading-tight">{d.name}</h3>
                       <p className="text-[11px] mt-1.5" style={{ color: "var(--muted)" }}>{d.blurb.slice(0, 100)}…</p>
@@ -590,7 +601,7 @@ export function Faculty() {
                       View department <Lucide.ArrowRight size={12} />
                     </Link>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-6 md:p-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-5 md:p-8">
                     {members.map((f, i) => (
                       <Reveal key={f.id} delay={(i % 10) * 0.02}>
                         <FacultyCard member={f} onOpen={setProfile} compact />
@@ -604,7 +615,7 @@ export function Faculty() {
         </div>
       </section>
 
-      <FacultyProfileModal member={profile} onClose={() => setProfile(null)} />
+      <FacultyProfileModal member={profile} onClose={() => setProfile(null)} onSelect={setProfile} />
       <CtaBand />
     </>
   );

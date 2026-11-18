@@ -189,7 +189,11 @@ function Header({ onSearch }) {
 
   useEffect(() => {
     document.body.style.overflow = mobile ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    document.body.classList.toggle("drawer-open", mobile);
+    return () => {
+      document.body.style.overflow = "";
+      document.body.classList.remove("drawer-open");
+    };
   }, [mobile]);
 
   return (
@@ -285,7 +289,7 @@ function Header({ onSearch }) {
               <Link to="/admissions" className="btn btn-gold btn-sm hidden sm:inline-flex">
                 Apply Now <Lucide.ArrowUpRight size={13} />
               </Link>
-              <button className="icon-btn md:hidden menu-btn" onClick={() => setMobile(true)} aria-label="Open menu">
+              <button className="icon-btn xl:hidden menu-btn" onClick={() => setMobile(true)} aria-label="Open menu">
                 <Lucide.Menu size={20} />
               </button>
             </div>
@@ -314,7 +318,7 @@ function Header({ onSearch }) {
             </button>
           </div>
         </div>
-        <div className="px-5 py-4 flex-1">
+        <div className="mobile-drawer-body">
           <NavLink to="/" className="mobile-link">Home <Lucide.ArrowUpRight size={16} /></NavLink>
           {navMenus.map((menu) => (
             <div key={menu.label}>
@@ -350,13 +354,15 @@ function Header({ onSearch }) {
           <Link to="/notices" className="mobile-link">Notices <Lucide.Bell size={16} /></Link>
           <Link to="/gallery" className="mobile-link">Gallery <Lucide.Camera size={16} /></Link>
           <Link to="/contact" className="mobile-link">Contact <Lucide.MapPin size={16} /></Link>
-          <div className="mt-6 grid grid-cols-2 gap-3">
+        </div>
+        <div className="mobile-drawer-foot">
+          <div className="grid grid-cols-2 gap-3">
             <Link to="/admissions" className="btn btn-gold justify-center">Apply Now</Link>
             <button onClick={() => { setMobile(false); onSearch(); }} className="btn btn-outline justify-center">
               <Lucide.Search size={14} /> Search
             </button>
           </div>
-          <div className="mt-6 rounded-xl p-4 text-[11px] leading-relaxed" style={{ background: "var(--bg-alt)", color: "var(--muted)" }}>
+          <div className="mt-4 rounded-xl p-4 text-[11px] leading-relaxed" style={{ background: "var(--bg-alt)", color: "var(--muted)" }}>
             <div className="flex items-center gap-2 font-semibold mb-1" style={{ color: "var(--text)" }}>
               <Lucide.Phone size={12} className="text-gold" /> {college.phone}
             </div>
@@ -443,7 +449,7 @@ function Footer() {
             <div className="grid gap-3 text-[12.5px]" style={{ color: "rgba(255,255,255,.62)" }}>
               <p className="flex items-start gap-2.5">
                 <Lucide.MapPin size={14} className="mt-0.5 shrink-0" style={{ color: "#d8b36a" }} />
-                {college.address.full}
+                <span className="min-w-0">{college.address.full}</span>
               </p>
               <a href={`tel:${college.phone}`} className="flex items-center gap-2.5">
                 <Lucide.Phone size={14} style={{ color: "#d8b36a" }} /> {college.phone}
