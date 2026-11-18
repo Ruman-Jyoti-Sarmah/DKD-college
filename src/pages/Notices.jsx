@@ -149,7 +149,7 @@ export function Notices() {
                       onClick={() => setCategory(c)}
                     >
                       {c}
-                      <span className="ml-2 opacity-60 text-[10px]">
+                      <span className="ml-2 text-[10px] font-semibold">
                         {counts[c] || 0}
                       </span>
                     </button>
@@ -342,7 +342,7 @@ export function Notices() {
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Lucide.Download size={14} style={{ color: "var(--gold)" }} />
-                  <h4 className="text-[13px] font-semibold">Related downloads</h4>
+                  <h3 className="text-[13px] font-semibold">Related downloads</h3>
                 </div>
                 {downloads.slice(0, 3).map((d) => (
                   <Link
